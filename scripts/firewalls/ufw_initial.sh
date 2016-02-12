@@ -28,27 +28,24 @@ done
 flush_all()
 {
 	echo [Flushing Tables.....]
-	ufw reset
+	{
+	echo y | ufw reset
+	} >/dev/null
 	print_options=$print_options"[Firewall Flushed]\n"
 }
 
 defaults()
 {
 echo [Setting Defaults....]
-
-# Default Policies
+{
+ufw enable
 ufw default deny incoming
 ufw default deny outgoing
-print_options=$print_options"[Defaults Policies Set]\n"
-#Allow Loopback in/out
-print_options=$print_options"[Allow Loopback]\n"
+print_options=$print_options"[Default Policies Set]\n"
+allow_dns
+} >/dev/null
 
-#Allow established in/out
-print_options=$print_options"[Allow Established]\n"
-#Limit pings
 
-#Allow DNS out/in
-print_options=$print_options"[Defaults Set]\n"
 }
 
 allow_ping()
@@ -60,30 +57,37 @@ print_options=$print_options"[ICMP Enabled]\n"
 allow_dns()
 {
 print_options=$print_options"[DNS Enabled]\n"
-iptables -A INPUT -p tcp --sport 53 -j ACCEPT
-iptables -A INPUT -p udp --sport 53 -j ACCEPT
-iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+ufw allow out 53/tcp
+ufw allow out 53/udp
+ufw allow in 53/tcp
+ufw allow in 53/udp
 }
 
 
-#allow(ports,chain,sport/dport)
+#allow(ports,out/in,protocol)
 allow()
 {
+#split string into array by ','
+IFS=',' read -r -a ports <<< "$1"
 
+#check if out or in
 if [ "$2" = "out" ]; then
 	egress="out"
 else
-	egress=""
+	egress="in"
 fi
-
-if [ "$1" = "any" ] || [ "$1" = "all" ]; then
-	ufw allow any
-	print_options=$print_options"[All ports allowed]\n"
+#check tcp or udp
+if [ "$3" = "udp" ]; then
+	pro="udp"
 else
-	echo $1 | tr "," "\n" | xargs -n1 ufw allow $egress $1
-	print_options=$print_options"[$egress ports $1 allowed]\n"
+	pro="tcp"
 fi
+#loop through array and set rules
+for i in "${ports[@]}"; do
+	ufw allow $egress $i/$pro &>/dev/null
+done
+#print allowed rules
+print_options=$print_options"[$pro ports $1 allowed $egress]\n"
 }
 
 save_rules()
@@ -136,12 +140,12 @@ print_logo
 flush_all -c
 defaults
 read -e -p "Enter Input Ports to Allow: " -i "22,80" ports
-allow  $ports "INPUT" "dport"
+allow  $ports
 read -e -p "Enter Output Ports to Allow: " -i "80,443" ports
-allow  $ports "OUTPUT" "dport"
-end_append
+allow  $ports "out"
+#end_append
 #print_rules
-save_rules
+#save_rules
 echo -e "$print_options"
 }
 

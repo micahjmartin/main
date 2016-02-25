@@ -26,7 +26,7 @@ read -p "Press enter to send SMS"
 
 code=$(head /dev/urandom | tr -dc 0-9 | head -c5)
 info=$(cat /home/$(whoami)/.tauth/tauth_conf | grep Phone | awk '{print $2}')
-message="message=Authentication:"$code
+message='message="Authentication: $code"'
 sent=$(curl -s http://textbelt.com/text -d number=$info -d $message)
 success=$(echo $sent | cut -d" " -f3)
 

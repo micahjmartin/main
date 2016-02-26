@@ -37,7 +37,7 @@ check_ssh() {
 #find SSH config file
 if [[ -f /etc/ssh/sshd_config ]]; then
 	SSH_CONF="/etc/ssh/sshd_config"
-	green "SSH config file found at "$SSH_CONF
+	#green "SSH config file found at "$SSH_CONF
 	
 else
 	red "No SSH config found in /etc/ssh/sshd_config"

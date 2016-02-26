@@ -15,7 +15,7 @@ green() { CGREEN='\033[0;32m'; echo -e ${CGREEN}$1${NOCOLOR}; }
 uninstall() {
 rm -R $TAUTH_ROOT
 rm -R $TAUTH_CONF_ROOT
-if [ $(tail -n 1 /etc/ssh/sshd_config | grep tauth) != "" ]
+if [ $(tail -n 1 /etc/ssh/sshd_config | grep tauth) != "" ]; then
 	head -n -1 /etc/ssh/sshd_config > /etc/ssh/sshtemp ; mv /etc/ssh/sshtemp /etc/ssh/sshd_config
 fi
 }
@@ -26,12 +26,12 @@ while true; do
         "EMAIL" | "email" ) 
 		
 		echo "Authentication Code:$code" > mail.txt
-		curl --url "$EMAIL_Serv" --ssl-reqd --mail-from "$EMAIL_User" --mail-rcpt "$info" --upload-file mail.txt --user "$EMAIL_User:$EMAIL_Pass" --insecure
+		curl --url "$EMAIL_Serv" --ssl-reqd --mail-from "$EMAIL_User" --mail-rcpt "$EMAIL" --upload-file mail.txt --user "$EMAIL_User:$EMAIL_Pass" --insecure
 		rm mail.txt
 	break;;
         "sms" | "SMS" ) 
-		message='message=Authentication:$code'
-		sent=$(curl -s http://textbelt.com/text -d number=$info -d $message)
+		message="message=Authentication:$code"
+		sent=$(curl -s http://textbelt.com/text -d number=$PHONE -d $message)
 		success=$(echo $sent | cut -d" " -f3)
 
 		if [ $success == "true" ]; then 

@@ -85,6 +85,7 @@ echo "Version "$VERSION > $TAUTH_CONF
 echo "EmailUser "$EMAIL_User >> $TAUTH_CONF
 echo "EmailPass "$EMAIL_Pass >> $TAUTH_CONF
 echo "EmailServer "$EMAIL_Serv >> $TAUTH_CONF
+green "Settings updated!"
 }
 
 load_settings() {
@@ -179,6 +180,17 @@ fi
 green "$1 removed from tauth"
 }
 
+email_tauth() {
+if [ $1 == "view" ]; then
+	blue "[ Email: $EMAIL_User ] [ Password: "${EMAIL_Pass:0:1}"******* ]"
+	blue "[ Server: $EMAIL_Serv ]"
+else
+	read -p "Enter Gmail address: " EMAIL_User
+	read -p "Enter Gmail password: " -s EMAIL_Pass
+	write_settings
+fi
+}
+
 init() {
 check_root
 load_settings
@@ -195,6 +207,10 @@ case $1 in
 	view)
 		init		
 		view_user $2
+		;;
+	email)
+		init
+		email_tauth
 		;;
 	remove)
         	remove_user $2
@@ -219,6 +235,11 @@ Available commands:
     view
 	View the settings of a tauth user.
 	$0 view [USER]
+    email
+	$0 email change
+	    change the email settings for tauth
+	$0 email view
+	    view the email settings for tauth
     remove
 	Removes tauth from a users account
 	$0 remove [USER]

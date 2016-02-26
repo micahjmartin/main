@@ -13,7 +13,7 @@ green() { CGREEN='\033[0;32m'; echo -e ${CGREEN}$1${NOCOLOR}; }
 
 write_settings() {
 if [[ ! -d /etc/tauth ]]; then
-	mkdir /etc/tauth
+	mkdir "/etc/tauth"
 fi
 echo "Version "$VERSION > /etc/tauth/tauth_config
 echo "EmailUser "$EMAIL_User >> /etc/tauth/tauth_config
@@ -50,16 +50,21 @@ else
 fi
 }
 
-install_tuath() {
-check_ssh()
-mkdir /usr/local/tauth
+install_tauth() {
+check_ssh
+mkdir "/usr/local/tauth"
 curl $GITHUB_LOCATION/tauth_login.sh >> /usr/local/tauth/tauth-login.sh
 curl $GITHUB_LOCATION/tauth_manage.sh >> /usr/local/tauth/tauth-manager.sh
+chmod +x /usr/local/tauth/tauth-manager.sh
+chmod +x /usr/local/tauth/tauth-login.sh
 read -p "Enter Gmail address: " EMAIL_User
 read -p "Enter Gmail password: " -s EMAIL_User
-write_settings()
+write_settings
+cp $SSH_CONF ".$SSH_CONF.bac"
 echo "ForceCommand /usr/local/tauth/tauth-login.sh" >> $SSH_CONF
+echo
 green "Install Successfull!"
 }
-check_root()
+
+check_root
 install_tauth

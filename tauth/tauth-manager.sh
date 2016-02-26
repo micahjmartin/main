@@ -68,7 +68,7 @@ curl https://raw.githubusercontent.com/micahjmartin/main/master/tauth/tauth_logi
 curl https://raw.githubusercontent.com/micahjmartin/main/master/tauth/tauth_manage.sh >> /usr/local/tauth/tauth-manager.sh
 read -p "Enter Gmail address: " EMAIL_User
 read -p "Enter Gmail password: " -s EMAIL_User
-write_settings()
+write_settings
 echo "ForceCommand /usr/local/tauth/tauth-login.sh" >> $SSH_CONF
 green "Install Successfull!"
 }
@@ -102,4 +102,7 @@ fi
 
 #curl http://textbelt.com/text -d number=7172625000 -d "message=hello from Micah"
 
-init
+check_root
+check_ssh
+load_settings
+add_user "micah"

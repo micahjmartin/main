@@ -4,7 +4,7 @@ SSH_CONF=""
 EMAIL_User=""
 EMAIL_Pass=""
 EMAIL_Serv="smtps://smtp.gmail.com:465"
-GITHUB_LOCATION="https://raw.githubusercontent.com/micahjmartin/main/master/tauth/"
+GITHUB_LOCATION="https://raw.githubusercontent.com/micahjmartin/main/master/tauth"
 TAUTH_CONF="/etc/tauth/tauth_config"
 TAUTH_ROOT="/usr/local/tauth"
 
@@ -56,7 +56,7 @@ install_tauth() {
 #make directory and curl program
 mkdir $TAUTH_ROOT
 curl $GITHUB_LOCATION/tauth-login.sh >> $TAUTH_ROOT/tauth-login.sh
-curl $GITHUB_LOCATION/tauth-manage.sh >> /usr/local/tauth/tauth-manager.sh
+curl $GITHUB_LOCATION/tauth-manager.sh >> /usr/local/tauth/tauth-manager.sh
 #make programs executable
 chmod +x $TAUTH_ROOT/tauth-manager.sh
 chmod +x $TAUTH_ROOT/tauth-login.sh

@@ -4,8 +4,9 @@ tauth is a text based verification program for SSH servers. tauth sends a SMS me
 
 To install:
 
-curl https://raw.githubusercontent.com/micahjmartin/main/master/tauth/tauth-install.sh > tauth-install
-chmod +x tauth-install
+curl https://raw.githubusercontent.com/micahjmartin/main/master/tauth/tauth-install.sh > tauth-install;
+chmod +x tauth-install;
+./tauth-install;
 
 Enter email and email password
 

@@ -1,5 +1,4 @@
 #!/bin/bash
-
 TAUTH_CONF="/etc/tauth/tauth_config"
 TAUTH_ROOT="/usr/local/tauth"
 
@@ -84,12 +83,12 @@ if [ $1 == $code ]; then
 	/bin/bash
 	blue "Thank you for using t-auth"	
 	exit
+fi
 }
-
-blue "Please verify login with authentication code"
 
 load_settings
 load_user
+blue "Please login with tauth"
 #Select message version and send code
 sel
 #read users input

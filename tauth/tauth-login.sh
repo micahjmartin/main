@@ -25,8 +25,9 @@ while true; do
     case $method in
         "EMAIL" | "email" ) 
 		
-		echo "Subject: TAUTH Authentication Code\n\n$code" > mail.txt
-		curl --url "$EMAIL_Serv" --ssl-reqd --mail-from "$EMAIL_User" --mail-rcpt "$EMAIL" --upload-file mail.txt --user "$EMAIL_User:$EMAIL_Pass" --insecure
+		echo -e "Subject: TAUTH Authentication Code\n\n$code" > mail.txt
+		curl -sS --url "$EMAIL_Serv" --ssl-reqd --mail-from "$EMAIL_User" --mail-rcpt "$EMAIL" --upload-file mail.txt --user "$EMAIL_User:$EMAIL_Pass" --insecure
+		red "Email sent to $EMAIL"
 		rm mail.txt
 	break;;
         "sms" | "SMS" ) 
@@ -91,12 +92,15 @@ if [ $1 == $code ]; then
 	/bin/bash
 	blue "Thank you for using t-auth"	
 	exit
+else
+	red "Incorrect! Removing from server..."
 fi
 }
 
 load_settings
 load_user
-blue "Please login with tauth"
+blue "Server secured with TAUTH"
+blue "Please login with authentication code"
 #Select message version and send code
 sel
 #read users input

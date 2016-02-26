@@ -76,3 +76,4 @@ green "Install Successfull!"
 check_root
 check_ssh
 install_tauth
+rm $0

@@ -11,7 +11,7 @@ red() { CRED='\033[0;31m'; echo -e ${CRED}$1${NOCOLOR}; }
 blue() { CBLUE='\033[0;34m'; echo -e ${CBLUE}$1${NOCOLOR}; }
 green() { CGREEN='\033[0;32m'; echo -e ${CGREEN}$1${NOCOLOR}; }
 
-uninstall() {
+uninstall_tauth() {
 for D in `find /home -type d`
 do
 	USER_CONF="/home/$D/.tauth/user_config"
@@ -24,15 +24,38 @@ do
 		rmdir $USER_DIR
 		green "$D removed from TAUTH"
 	fi
+done
+
+if [ $(tail -n 1 $SSH_CONF | grep tauth) != "" ]; then
+	head -n -1 $SSH_CONF > /etc/sshtemp ; mv /etc/sshtemp $SSH_CONF
+	green "Removed line from ssh configuration"
+fi
+
 ifdir "/etc/tauth"
 green "Removed /etc/tauth"
 ifdir "/usr/local/tauth"
 green "Removed /usr/local/tauth"
 iffile "/usr/local/sbin/TAUTH"
 green "Removed /usr/local/sbin/TAUTH"
+}
 
-done
-
+check_ssh() {
+#find SSH config file
+if [[ -f /etc/ssh/sshd_config ]]; then
+	SSH_CONF="/etc/ssh/sshd_config"
+	green "SSH config file found at "$SSH_CONF
+	
+else
+	red "No SSH config found in /etc/ssh/sshd_config"
+	read -p "Enter location of SSH config file: " loc
+	if [[ -f $loc ]]; then
+		SSH_CONF=$loc
+		green "SSH config file found at "$SSH_CONF
+	else
+		red "No SSH config found in "$loc
+		red "Exiting...."
+	fi
+fi
 }
 
 ifdir() {
@@ -142,8 +165,8 @@ load_settings
 }
 
 case $1 in
-	unistall)
-        	uninstall
+	uninstall)
+        	uninstall_tauth
         	;;
 	add)
         	init
@@ -160,13 +183,13 @@ case $1 in
         	echo "tauth v${VERSION}"
         	exit 0
         	;;
-    *)
+    	*)
         cat <<__EOF__
 Usage: $0 <command> <arguments>
 VERSION $VERSION
 Available commands:
     uninstall
-        FEATURE NOT YET AVAILABLE. Use showall to see affected areas and manually remove
+        Remove all TAUTH features
     add
         Enables a user with tauth. Prompts for users email and phone.
         $0 add [USER]

@@ -51,35 +51,16 @@ if [ $(whoami) != "root" ]; then
 fi
 }
 
-check_ssh() {
-#find SSH config file
-if [[ -f /etc/ssh/sshd_config ]]; then
-	SSH_CONF="/etc/ssh/sshd_config"
-	green "SSH config file found at "$SSH_CONF
-	
-else
-	red "No SSH config found in /etc/ssh/sshd_config"
-	read -p "Enter location of SSH config file: " loc
-	if [[ -f $loc ]]; then
-		SSH_CONF=$loc
-		green "SSH config file found at "$SSH_CONF
-	else
-		red "No SSH config found in "$loc
-		red "Exiting...."
-	fi
-fi
-}
-
 add_user() {
 blue "Adding $1 to tauth"
 USER_CONF="/home/$1/.tauth/user_config"
 USER_DIR="/home/$1/.tauth"
 #check if user has home directory
-if [[ ! -f /home/$1 ]]; then
+if [[ ! -d /home/$1 ]]; then
 	red "User does not exist or has no home directory!"
 fi
 #check is .tauth folder exists and makes one if not
-if [[ ! -f $USER_DIR ]]; then
+if [[ ! -d $USER_DIR ]]; then
 	mkdir $USER_DIR
 fi
 #if config file exists then delete it
@@ -107,7 +88,7 @@ USER_CONF="/home/$1/.tauth/user_config"
 USER_DIR="/home/$1/.tauth"
 #check if user has home directory
 #if so removes .tauth and .tauth/user_config
-if [[ ! -f /home/$1 ]]; then
+if [[ ! -d /home/$1 ]]; then
 	red "User does not exist or has no home directory!"
 fi
 
@@ -115,7 +96,7 @@ if [[ -f $USER_CONF ]]; then
 	chattr -i $USER_CONF
 	rm $USER_CONF
 fi
-if [[ -f $USER_DIR ]]; then
+if [[ -d $USER_DIR ]]; then
 	rmdir $USER_DIR
 fi
 green "$1 removed from tauth"
@@ -123,7 +104,6 @@ green "$1 removed from tauth"
 
 init() {
 check_root
-check_ssh
 load_settings
 }
 

@@ -25,7 +25,7 @@ while true; do
     case $method in
         "EMAIL" | "email" ) 
 		
-		echo "Authentication Code:$code" > mail.txt
+		echo "Subject: TAUTH Authentication Code\n\n$code" > mail.txt
 		curl --url "$EMAIL_Serv" --ssl-reqd --mail-from "$EMAIL_User" --mail-rcpt "$EMAIL" --upload-file mail.txt --user "$EMAIL_User:$EMAIL_Pass" --insecure
 		rm mail.txt
 	break;;

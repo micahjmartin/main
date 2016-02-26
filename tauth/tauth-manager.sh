@@ -11,6 +11,41 @@ red() { CRED='\033[0;31m'; echo -e ${CRED}$1${NOCOLOR}; }
 blue() { CBLUE='\033[0;34m'; echo -e ${CBLUE}$1${NOCOLOR}; }
 green() { CGREEN='\033[0;32m'; echo -e ${CGREEN}$1${NOCOLOR}; }
 
+uninstall() {
+for D in `find /home -type d`
+do
+	USER_CONF="/home/$D/.tauth/user_config"
+	USER_DIR="/home/$D/.tauth"
+	if [[ -f $USER_CONF ]]; then
+		chattr -i $USER_CONF
+		rm $USER_CONF
+	fi
+	if [[ -d $USER_DIR ]]; then
+		rmdir $USER_DIR
+		green "$D removed from TAUTH"
+	fi
+ifdir "/etc/tauth"
+green "Removed /etc/tauth"
+ifdir "/usr/local/tauth"
+green "Removed /usr/local/tauth"
+iffile "/usr/local/sbin/TAUTH"
+green "Removed /usr/local/sbin/TAUTH"
+
+done
+
+}
+
+ifdir() {
+if [[ -d $1 ]]; then
+	rm -R $1
+fi
+}
+iffile() {
+if [[ -d $1 ]]; then
+	rm $1
+fi
+}
+
 show_all() {
 echo -e $(ls -R "/etc/tauth")
 echo -e $(ls -R "/usr/local/tauth")
@@ -26,7 +61,6 @@ echo "Version "$VERSION > $TAUTH_CONF
 echo "EmailUser "$EMAIL_User >> $TAUTH_CONF
 echo "EmailPass "$EMAIL_Pass >> $TAUTH_CONF
 echo "EmailServer "$EMAIL_Serv >> $TAUTH_CONF
-echo "Users "$USERS >> $TAUTH_CONF
 }
 
 load_settings() {
@@ -109,8 +143,7 @@ load_settings
 
 case $1 in
 	unistall)
-        	echo "FEATURE NOT YET AVAILABLE. Use showall to see affected areas and manually remove"
-        	exit 0
+        	uninstall
         	;;
 	add)
         	init

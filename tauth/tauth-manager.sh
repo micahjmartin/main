@@ -44,7 +44,7 @@ check_ssh() {
 #find SSH config file
 if [[ -f /etc/ssh/sshd_config ]]; then
 	SSH_CONF="/etc/ssh/sshd_config"
-	green "SSH config file found at "$SSH_CONF
+	#green "SSH config file found at "$SSH_CONF
 	
 else
 	red "No SSH config found in /etc/ssh/sshd_config"
@@ -116,6 +116,7 @@ USER_DIR="/home/$1/.tauth"
 #check if user has home directory
 if [[ ! -d /home/$1 ]]; then
 	red "User does not exist or has no home directory!"
+	exit
 fi
 #check is .tauth folder exists and makes one if not
 if [[ ! -d $USER_DIR ]]; then
@@ -139,6 +140,24 @@ chattr +i $USER_CONF
 green $1" added to tauth!"
 }
 
+view_user() {
+USER_CONF="/home/$1/.tauth/user_config"
+USER_DIR="/home/$1/.tauth"
+#check if user has home directory
+if [[ ! -d /home/$1 ]]; then
+	red "User does not exist or has no home directory!"
+	exit
+fi
+#if config file exists then view it
+if [[ -f $USER_CONF ]]; then
+	#print out previous user data
+	blue "$1's tauth data:"
+	prev_email=$(echo $(cat $USER_CONF | grep Email | awk '{print $2}'))
+	prev_phone=$(echo $(cat $USER_CONF | grep Phone | awk '{print $2}'))
+	blue "[ Email: $prev_email ] [ Phone: $prev_phone ]"
+fi
+}
+
 remove_user() {
 blue "Removing $1 from tauth"
 USER_CONF="/home/$1/.tauth/user_config"
@@ -147,6 +166,7 @@ USER_DIR="/home/$1/.tauth"
 #if so removes .tauth and .tauth/user_config
 if [[ ! -d /home/$1 ]]; then
 	red "User does not exist or has no home directory!"
+	exit
 fi
 
 if [[ -f $USER_CONF ]]; then
@@ -172,9 +192,12 @@ case $1 in
         	init
 		add_user $2
         	;;
+	view)
+		init		
+		view_user $2
+		;;
 	remove)
-        	init
-		remove_user $2
+        	remove_user $2
         	;;
 	showall)
         	show_all
@@ -193,6 +216,9 @@ Available commands:
     add
         Enables a user with tauth. Prompts for users email and phone.
         $0 add [USER]
+    view
+	View the settings of a tauth user.
+	$0 view [USER]
     remove
 	Removes tauth from a users account
 	$0 remove [USER]

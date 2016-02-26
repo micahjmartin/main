@@ -41,10 +41,10 @@ done
 
 load_settings() {
 if [[ -f /etc/tauth/tauth_config ]]; then
-	$EMAIL_User=$(cat $TAUTH_CONF | grep EmailUser | awk '{print $2}')
-	$EMAIL_Pass=$(cat $TAUTH_CONF | grep EmailPass | awk '{print $2}')
-	$EMAIL_Serv=$(cat $TAUTH_CONF | grep EmailServer | awk '{print $2}')
-	$USERS=$(cat $TAUTH_CONF | grep Users | awk '{print $2}')
+	EMAIL_User=$(cat $TAUTH_CONF | grep EmailUser | awk '{print $2}')
+	EMAIL_Pass=$(cat $TAUTH_CONF | grep EmailPass | awk '{print $2}')
+	EMAIL_Serv=$(cat $TAUTH_CONF | grep EmailServer | awk '{print $2}')
+	USERS=$(cat $TAUTH_CONF | grep Users | awk '{print $2}')
 	green "Configuration file loaded"
 else
 	red "No configuration file found! Restart Program!"

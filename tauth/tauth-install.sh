@@ -64,7 +64,7 @@ chmod +x $TAUTH_ROOT/tauth-login.sh
 ln -s "$TAUTH_ROOT/tauth-manager.sh" "/usr/local/sbin/TAUTH"
 #read user input and write it to config file
 read -p "Enter Gmail address: " EMAIL_User
-read -p "Enter Gmail password: " -s EMAIL_User
+read -p "Enter Gmail password: " -s EMAIL_Pass
 write_settings
 #back up ssh data and append tauth line
 cp $SSH_CONF "$SSH_CONF.bac"

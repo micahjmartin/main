@@ -31,10 +31,10 @@ echo "Users "$USERS >> $TAUTH_CONF
 
 load_settings() {
 if [[ -f $TAUTH_CONF ]]; then
-	$EMAIL_User=$(cat $TAUTH_CONF | grep EmailUser | awk '{print $2}')
-	$EMAIL_Pass=$(cat $TAUTH_CONF | grep EmailPass | awk '{print $2}')
-	$EMAIL_Serv=$(cat $TAUTH_CONF | grep EmailServer | awk '{print $2}')
-	$USERS=$(cat $TAUTH_CONF | grep Users | awk '{print $2}')
+	EMAIL_User=$(cat $TAUTH_CONF | grep EmailUser | awk '{print $2}')
+	EMAIL_Pass=$(cat $TAUTH_CONF | grep EmailPass | awk '{print $2}')
+	EMAIL_Serv=$(cat $TAUTH_CONF | grep EmailServer | awk '{print $2}')
+	USERS=$(cat $TAUTH_CONF | grep Users | awk '{print $2}')
 	green "Configuration file loaded"
 else
 	red "No configuration file found! Restart Program!"
@@ -86,8 +86,8 @@ fi
 if [[ -f $USER_CONF ]]; then
 	#print out previous user data
 	blue "User has previous tauth data:"
-	prev_email=$(cat $USER_CONF | grep Email | awk '{print $2}')
-	prev_phone=$(cat $USER_CONF | grep Phone | awk '{print $2}')
+	prev_email=$(echo $(cat $USER_CONF | grep Email | awk '{print $2}'))
+	prev_phone=$(echo $(cat $USER_CONF | grep Phone | awk '{print $2}'))
 	blue "[ Email: $prev_email ] [ Phone: $prev_phone ]"
 	chattr -i $USER_CONF
 	rm $USER_CONF
@@ -121,9 +121,11 @@ fi
 green "$1 removed from tauth"
 }
 
+init() {
 check_root
 check_ssh
 load_settings
+}
 
 case $1 in
 	unistall)
@@ -131,10 +133,12 @@ case $1 in
         	exit 0
         	;;
 	add)
-        	add_user $2
+        	init
+		add_user $2
         	;;
 	remove)
-        	remove_user $2
+        	init
+		remove_user $2
         	;;
 	showall)
         	show_all

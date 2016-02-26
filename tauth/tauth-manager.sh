@@ -5,6 +5,7 @@ EMAIL_User=""
 EMAIL_Pass=""
 EMAIL_Serv="smtps://smtp.gmail.com:465"
 TAUTH_CONF="/etc/tauth/tauth_config"
+USERS="/etc/tauth/users"
 
 NOCOLOR='\033[0m'
 red() { CRED='\033[0;31m'; echo -e ${CRED}$1${NOCOLOR}; }
@@ -25,7 +26,7 @@ green "Removed /usr/local/tauth"
 iffile "/usr/local/sbin/TAUTH"
 green "Removed /usr/local/sbin/TAUTH"
 #remove folder stuff
-for D in `find /home -type d | grep tauth`
+for D in `cat $USERS`;
 do
 	USER_CONF="$D/user_config"
 	USER_DIR="$D"
@@ -137,6 +138,7 @@ read -p "Enter user's SMS number: " num
 read -p "Enter user's Email: " em
 echo "Phone "$num > $USER_CONF
 echo "Email "$em >> $USER_CONF
+echo $1 >> $USERS
 chattr +i $USER_CONF
 green $1" added to tauth!"
 }

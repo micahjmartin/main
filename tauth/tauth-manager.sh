@@ -12,10 +12,23 @@ blue() { CBLUE='\033[0;34m'; echo -e ${CBLUE}$1${NOCOLOR}; }
 green() { CGREEN='\033[0;32m'; echo -e ${CGREEN}$1${NOCOLOR}; }
 
 uninstall_tauth() {
-for D in `find /home -type d`
+#remove line ffrom ssh conf
+if [ $(tail -n 1 $SSH_CONF | grep tauth) != "" ]; then
+	head -n -1 $SSH_CONF > /etc/sshtemp ; mv /etc/sshtemp $SSH_CONF
+	green "Removed line from ssh configuration"
+fi
+#remove folders
+ifdir "/etc/tauth"
+green "Removed /etc/tauth"
+ifdir "/usr/local/tauth"
+green "Removed /usr/local/tauth"
+iffile "/usr/local/sbin/TAUTH"
+green "Removed /usr/local/sbin/TAUTH"
+#remove folder stuff
+for D in `find /home -type d | grep tauth`
 do
-	USER_CONF="/home/$D/.tauth/user_config"
-	USER_DIR="/home/$D/.tauth"
+	USER_CONF="$D/user_config"
+	USER_DIR="$D"
 	if [[ -f $USER_CONF ]]; then
 		chattr -i $USER_CONF
 		rm $USER_CONF
@@ -25,18 +38,6 @@ do
 		green "$D removed from TAUTH"
 	fi
 done
-
-if [ $(tail -n 1 $SSH_CONF | grep tauth) != "" ]; then
-	head -n -1 $SSH_CONF > /etc/sshtemp ; mv /etc/sshtemp $SSH_CONF
-	green "Removed line from ssh configuration"
-fi
-
-ifdir "/etc/tauth"
-green "Removed /etc/tauth"
-ifdir "/usr/local/tauth"
-green "Removed /usr/local/tauth"
-iffile "/usr/local/sbin/TAUTH"
-green "Removed /usr/local/sbin/TAUTH"
 }
 
 check_ssh() {
@@ -92,7 +93,7 @@ if [[ -f $TAUTH_CONF ]]; then
 	EMAIL_Pass=$(cat $TAUTH_CONF | grep EmailPass | awk '{print $2}')
 	EMAIL_Serv=$(cat $TAUTH_CONF | grep EmailServer | awk '{print $2}')
 	USERS=$(cat $TAUTH_CONF | grep Users | awk '{print $2}')
-	green "Configuration file loaded"
+	#green "Configuration file loaded"
 else
 	red "No configuration file found! Restart Program!"
 	exit
@@ -128,7 +129,6 @@ if [[ -f $USER_CONF ]]; then
 	prev_phone=$(echo $(cat $USER_CONF | grep Phone | awk '{print $2}'))
 	blue "[ Email: $prev_email ] [ Phone: $prev_phone ]"
 	chattr -i $USER_CONF
-	rm $USER_CONF
 fi
 #gets user input
 read -p "Enter user's SMS number: " num

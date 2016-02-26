@@ -55,8 +55,8 @@ fi
 install_tauth() {
 #make directory and curl program
 mkdir $TAUTH_ROOT
-curl $GITHUB_LOCATION/tauth-login.sh >> $TAUTH_ROOT/tauth-login.sh
-curl $GITHUB_LOCATION/tauth-manager.sh >> /usr/local/tauth/tauth-manager.sh
+curl -sS $GITHUB_LOCATION/tauth-login.sh >> $TAUTH_ROOT/tauth-login.sh
+curl -sS $GITHUB_LOCATION/tauth-manager.sh >> /usr/local/tauth/tauth-manager.sh
 #make programs executable
 chmod +x $TAUTH_ROOT/tauth-manager.sh
 chmod +x $TAUTH_ROOT/tauth-login.sh

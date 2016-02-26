@@ -19,11 +19,11 @@ if [ $(tail -n 1 $SSH_CONF | grep tauth) != "" ]; then
 	green "Removed line from ssh configuration"
 fi
 #remove folders
-ifdir "/etc/tauth"
+rm -R "/etc/tauth"
 green "Removed /etc/tauth"
-ifdir "/usr/local/tauth"
+rm -R "/usr/local/tauth"
 green "Removed /usr/local/tauth"
-iffile "/usr/local/sbin/TAUTH"
+rm "/usr/local/sbin/TAUTH"
 green "Removed /usr/local/sbin/TAUTH"
 #remove folder stuff
 for D in `cat $USERS`;
@@ -183,7 +183,7 @@ green "$1 removed from tauth"
 }
 
 email_tauth() {
-if [ $1 == "view" ]; then
+if [ $1 = "view" ]; then
 	blue "[ Email: $EMAIL_User ] [ Password: "${EMAIL_Pass:0:1}"******* ]"
 	blue "[ Server: $EMAIL_Serv ]"
 else

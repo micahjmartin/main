@@ -4,29 +4,37 @@ SSH_CONF=""
 EMAIL_User=""
 EMAIL_Pass=""
 EMAIL_Serv="smtps://smtp.gmail.com:465"
+TAUTH_CONF="/etc/tauth/tauth_config"
 
 NOCOLOR='\033[0m'
 red() { CRED='\033[0;31m'; echo -e ${CRED}$1${NOCOLOR}; }
 blue() { CBLUE='\033[0;34m'; echo -e ${CBLUE}$1${NOCOLOR}; }
 green() { CGREEN='\033[0;32m'; echo -e ${CGREEN}$1${NOCOLOR}; }
 
+show_all() {
+echo -e $(ls -R "/etc/tauth")
+echo -e $(ls -R "/usr/local/tauth")
+echo -e $(ls -R "/usr/local/sbin/TAUTH")
+echo "Line added to $SSH_CONF"
+echo ".tauth folders added to active users (chattr -i to remove tauth_config)"
+}
 write_settings() {
 if [[ ! -d /etc/tauth ]]; then
 	mkdir /etc/tauth
 fi
-echo "Version "$VERSION > /etc/tauth/tauth_config
-echo "EmailUser "$EMAIL_User >> /etc/tauth/tauth_config
-echo "EmailPass "$EMAIL_Pass >> /etc/tauth/tauth_config
-echo "EmailServer "$EMAIL_Serv >> /etc/tauth/tauth_config
-echo "Users "$USERS >> /etc/tauth/tauth_config
+echo "Version "$VERSION > $TAUTH_CONF
+echo "EmailUser "$EMAIL_User >> $TAUTH_CONF
+echo "EmailPass "$EMAIL_Pass >> $TAUTH_CONF
+echo "EmailServer "$EMAIL_Serv >> $TAUTH_CONF
+echo "Users "$USERS >> $TAUTH_CONF
 }
 
 load_settings() {
-if [[ -f /etc/tauth/tauth_config ]]; then
-	$EMAIL_User=$(cat /home/$(whoami)/.tauth/tauth_conf | grep EmailUser | awk '{print $2}')
-	$EMAIL_Pass=$(cat /home/$(whoami)/.tauth/tauth_conf | grep EmailPass | awk '{print $2}')
-	$EMAIL_Serv=$(cat /home/$(whoami)/.tauth/tauth_conf | grep EmailServer | awk '{print $2}')
-	$USERS=$(cat /home/$(whoami)/.tauth/tauth_conf | grep Users | awk '{print $2}')
+if [[ -f $TAUTH_CONF ]]; then
+	$EMAIL_User=$(cat $TAUTH_CONF | grep EmailUser | awk '{print $2}')
+	$EMAIL_Pass=$(cat $TAUTH_CONF | grep EmailPass | awk '{print $2}')
+	$EMAIL_Serv=$(cat $TAUTH_CONF | grep EmailServer | awk '{print $2}')
+	$USERS=$(cat $TAUTH_CONF | grep Users | awk '{print $2}')
 	green "Configuration file loaded"
 else
 	red "No configuration file found! Restart Program!"
@@ -46,11 +54,11 @@ fi
 check_ssh() {
 #find SSH config file
 if [[ -f /etc/ssh/sshd_config ]]; then
-	SSH_CONF="/etc/ssh/sshd_conf"
+	SSH_CONF="/etc/ssh/sshd_config"
 	green "SSH config file found at "$SSH_CONF
 	
 else
-	red "No SSH config found in /etc/ssh/sshd_conf"
+	red "No SSH config found in /etc/ssh/sshd_config"
 	read -p "Enter location of SSH config file: " loc
 	if [[ -f $loc ]]; then
 		SSH_CONF=$loc
@@ -62,47 +70,97 @@ else
 fi
 }
 
-install_tuath() {
-mkdir /usr/local/tauth
-curl https://raw.githubusercontent.com/micahjmartin/main/master/tauth/tauth_login.sh >> /usr/local/tauth/tauth-login.sh
-curl https://raw.githubusercontent.com/micahjmartin/main/master/tauth/tauth_manage.sh >> /usr/local/tauth/tauth-manager.sh
-read -p "Enter Gmail address: " EMAIL_User
-read -p "Enter Gmail password: " -s EMAIL_User
-write_settings
-echo "ForceCommand /usr/local/tauth/tauth-login.sh" >> $SSH_CONF
-green "Install Successfull!"
-}
-
 add_user() {
-if [[ ! -f /home/$1/.tauth ]]; then
-	mkdir /home/$1/.tauth
+blue "Adding $1 to tauth"
+USER_CONF="/home/$1/.tauth/user_config"
+USER_DIR="/home/$1/.tauth"
+#check if user has home directory
+if [[ ! -f /home/$1 ]]; then
+	red "User does not exist or has no home directory!"
 fi
-if [[ -f /home/$1/.tauth/user_conf ]]; then
-	chattr -i /home/$1/.tauth/user_conf
-	rm /home/$1/.tauth/user_conf
+#check is .tauth folder exists and makes one if not
+if [[ ! -f $USER_DIR ]]; then
+	mkdir $USER_DIR
 fi
-
+#if config file exists then delete it
+if [[ -f $USER_CONF ]]; then
+	#print out previous user data
+	blue "User has previous tauth data:"
+	prev_email=$(cat $USER_CONF | grep Email | awk '{print $2}')
+	prev_phone=$(cat $USER_CONF | grep Phone | awk '{print $2}')
+	blue "[ Email: $prev_email ] [ Phone: $prev_phone ]"
+	chattr -i $USER_CONF
+	rm $USER_CONF
+fi
+#gets user input
 read -p "Enter user's SMS number: " num
 read -p "Enter user's Email: " em
-echo "Phone "$num > /home/$1/.tauth/user_conf
-echo "Email "$em >> /home/$1/.tauth/user_conf
-chattr +i /home/$1/.tauth/user_conf
+echo "Phone "$num > $USER_CONF
+echo "Email "$em >> $USER_CONF
+chattr +i $USER_CONF
 green $1" added to tauth!"
 }
 
 remove_user() {
-if [[ -f /home/$1/.tauth/user_conf ]]; then
-	chattr -i /home/$1/.tauth/user_conf
-	rm /home/$1/.tauth/user_conf
+blue "Removing $1 from tauth"
+USER_CONF="/home/$1/.tauth/user_config"
+USER_DIR="/home/$1/.tauth"
+#check if user has home directory
+#if so removes .tauth and .tauth/user_config
+if [[ ! -f /home/$1 ]]; then
+	red "User does not exist or has no home directory!"
 fi
-if [[ -f /home/$1/.tauth ]]; then
-	rm /home/$1/.tauth
-fi
-}
 
-#curl http://textbelt.com/text -d number=7172625000 -d "message=hello from Micah"
+if [[ -f $USER_CONF ]]; then
+	chattr -i $USER_CONF
+	rm $USER_CONF
+fi
+if [[ -f $USER_DIR ]]; then
+	rmdir $USER_DIR
+fi
+green "$1 removed from tauth"
+}
 
 check_root
 check_ssh
 load_settings
-add_user "micah"
+
+case $1 in
+	unistall)
+        	echo "FEATURE NOT YET AVAILABLE. Use showall to see affected areas and manually remove"
+        	exit 0
+        	;;
+	add)
+        	add_user $2
+        	;;
+	remove)
+        	remove_user $2
+        	;;
+	showall)
+        	show_all
+        	;;
+	version)
+        	echo "tauth v${VERSION}"
+        	exit 0
+        	;;
+    *)
+        cat <<__EOF__
+Usage: $0 <command> <arguments>
+VERSION $VERSION
+Available commands:
+    uninstall
+        FEATURE NOT YET AVAILABLE. Use showall to see affected areas and manually remove
+    add
+        Enables a user with tauth. Prompts for users email and phone.
+        $0 add [USER]
+    remove
+	Removes tauth from a users account
+	$0 remove [USER]
+    showall
+	Shows all the locations tauth affects
+	$0 showall
+    version
+        prints the tauth version
+__EOF__
+        ;;
+esac

@@ -8,18 +8,6 @@ echo
 echo
 }
 
-useless_select()
-{
-while true; do
-    read -p "Do you wish to continue? [Y/n] " yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
-}
-
 flush_all()
 {
 	echo [Flushing Tables.....]
@@ -42,7 +30,7 @@ iptables -P INPUT ACCEPT
 iptables -P FORWARD DROP
 iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
-print_options=$print_options"[Defaults Policies Set]\n"
+print_options=$print_options"[Defaults Policies Set to ACCEPT]\n"
 #Allow Loopback in/out
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A OUTPUT -o lo -j ACCEPT
@@ -62,40 +50,42 @@ print_options=$print_options"[Defaults Set]\n"
 
 allow_ping()
 {
-read -r -p "Allow ICMP (Reply in/Request out)? [y/N] "
-case  in
-    [yY][eE][sS]|[yY]) 
+read -r -p "Allow ICMP (Reply in/Request out)? [Y/n] " aping
+case $aping in
+    [nN][oO]|[nN])
+        print_options=$print_options"[ICMP Disabled]\n"
+        ;;
+	*) 
         iptables -A INPUT -p icmp --icmp-type 0 -j ACCEPT
 	iptables -A OUTPUT -p icmp --icmp-type 8 -j ACCEPT
 	print_options=$print_options"[ICMP Enabled]\n"
-        ;;
-    *)
-        print_options=$print_options"[ICMP Disabled]\n"
         ;;
 esac
 }
 allow_dns()
 {
-read -r -p "Allow DNS in? [y/N] "
-case  in
+read -r -p "Allow DNS Server? [y/N] " adns
+case $adns in
     [yY][eE][sS]|[yY]) 
-        print_options=$print_options"[DNS in Enabled]\n"
-	iptables -A INPUT -p tcp --sport 53 -j ACCEPT
-	iptables -A INPUT -p udp --sport 53 -j ACCEPT
+        print_options=$print_options"[DNS Serving Enabled]\n"
+	iptables -A INPUT -p tcp --dport 53 -j ACCEPT
+	iptables -A INPUT -p udp --dport 53 -j ACCEPT
+	iptables -A OUTPUT -p tcp --sport 53 -j ACCEPT
+	iptables -A OUTPUT -p udp --sport 53 -j ACCEPT
         ;;
     *)
-        print_options=$print_options"[DNS in Disabled]\n"
+        print_options=$print_options"[DNS Serving Disabled]\n"
         ;;
 esac
-read -r -p "Allow DNS out? [y/N] "
-case  in
-    [yY][eE][sS]|[yY]) 
-        print_options=$print_options"[DNS out Enabled]\n"
+read -r -p "Allow DNS requests? [Y/n] " adnso
+case $adnso in
+	[nN][oO]|[nN])
+        print_options=$print_options"[DNS Requests Disabled]\n"
+        ;;
+    *) 
+        print_options=$print_options"[DNS Requests Enabled]\n"
 	iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
 	iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-        ;;
-    *)
-        print_options=$print_options"[DNS out Disabled]\n"
         ;;
 esac
 }
@@ -136,20 +126,6 @@ print_options=$print_options"[Rules Saved to \"$out\"]\n"
 
 }
 
-deny()
-{
-if [ "$2" = "" ]; then
-	deny_chain="INPUT"
-else
-	deny_chain=$(echo $2 | tr '[:lower:]' '[:upper:]')
-fi
-if [ "$3" = "" ]; then
-	port_target="dport"
-else
-	port_target=$(echo $3 | tr '[:upper:]' '[:lower:]')
-fi
-echo $1 | tr "," "\n" | xargs -n1 iptables -A $allow_chain -j DROP -p tcp --$port_target
-}
 
 end_append()
 {
@@ -194,24 +170,10 @@ fi
 end_append
 #print_rules
 save_rules
+clear
+print_logo
 echo -e "$print_options"
 }
 
-flags_set()
-{
-inports=$1
-outports=$2
-flush_all -c
-defaults
-allow  $inports "INPUT" "dport"
-allow  $outports "OUTPUT" "dport"
-end_append
-save_rules
-echo -e "$print_options"
-}
 
-if [ "$1" = "" ]; then
-	main
-else
-	flags_set $1 $2
-fi
+main

@@ -32,8 +32,8 @@ iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 print_options=$print_options"[Defaults Policies Set to ACCEPT]\n"
 #Allow Loopback in/out
-iptables -A INPUT -i lo -j ACCEPT
-iptables -A OUTPUT -o lo -j ACCEPT
+#iptables -A INPUT -i lo -j ACCEPT
+#iptables -A OUTPUT -o lo -j ACCEPT
 print_options=$print_options"[Allow Loopback]\n"
 
 #Allow established in/out
@@ -50,14 +50,14 @@ print_options=$print_options"[Defaults Set]\n"
 
 allow_ping()
 {
-read -r -p "Allow ICMP (Reply in/Request out)? [Y/n] " aping
+read -r -p "Block ICMP? [y/N] " aping
 case $aping in
-    [nN][oO]|[nN])
-        print_options=$print_options"[ICMP Disabled]\n"
+    [yY][eE][sS]|[yY])
+        print_options=$print_options"[ICMP Blocked]\n"
         ;;
-	*) 
-        iptables -A INPUT -p icmp --icmp-type 0 -j ACCEPT
-	iptables -A OUTPUT -p icmp --icmp-type 8 -j ACCEPT
+	*)
+	iptables -A INPUT -p icmp -j ACCEPT
+	iptables -A OUTPUT -p icmp -j ACCEPT
 	print_options=$print_options"[ICMP Enabled]\n"
         ;;
 esac
@@ -143,6 +143,21 @@ iptables-save | grep - | grep -v "#"
 echo ""
 }
 
+boot_load() {
+read -r -p "Allow Load-on-Boot? [Y/n] " boto
+case $boto in
+	[nN][oO]|[nN])
+        print_options=$print_options"[Load-on-Boot Disabled]\n"
+        ;;
+    *) 
+	path="/etc/network/if-up.d/daemon-ip"
+        print_options=$print_options"[Load-on-Boot Enabled - $path]\n"	
+	echo "#!/bin/bash" > $path	
+	echo "iptables-restore < /etc/configure" >> $path
+	chmod +x $path
+        ;;
+esac
+}
 main()
 {
 print_options=""
@@ -169,7 +184,8 @@ fi
 
 end_append
 #print_rules
-save_rules
+save_rules "/etc/configure"
+boot_load
 clear
 print_logo
 echo -e "$print_options"

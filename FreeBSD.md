@@ -24,7 +24,11 @@ If you plan on never having SSH running, it might be a good idea to move `/etc/s
 	$ vi /etc/rc.conf
 
 #### Users
-Audit your users with `/etc/passwd`, `grep -v /nologin`. find users you do not want and lock them
+Audit your users by seeing which users are allowed to log in to your computer
+
+	$ cat /etc/passwd | grep -v /nologin
+
+Find users you do not want and lock them
 
 	$ pw lock [user]
 
@@ -82,7 +86,7 @@ NOTE: You must allow loopback and ICMP
 	~ pass in proto tcp to port $iports
 	~ pass out proto tcp to port $iports
 
-Start the pf firewall for the current sesison, or reboot to restart your box.
+Start the pf firewall for the current session, or reboot to restart your box.
 
 	$ service pf onestart
 	$ service pf onestatus
@@ -103,7 +107,7 @@ Check `netstat` or `sockstack` for listening connections
 	$ sockstat -4 #IPV4 Only
 	
 Adjust your firewall accordingly.
-Now allow the box internet acces.
+Now allow the box internet access.
 
 	$ ifconfig [em0] up
 

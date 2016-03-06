@@ -6,7 +6,9 @@ Assuming you are configuring a mail server
 ### 1. Basic starting points
 Run a quick `ifconfig` to get a list of interfaces. Make sure one is networked. /*if not check out 1a.*/
 Select the interface connected and flick it off. If you need to, now is a good time to change the name before turning it off. `ifconfig [em0] name [eth0]`
+
 	$ ifconfig [em0] down
+
 The timer starts. DO NOT KEEP THE NIC OFF FOR MORE THEN 5 MINUTES
 
 Now lets change the password. Its important to do this after the interface is down so any attackers cannot harvest credentials.

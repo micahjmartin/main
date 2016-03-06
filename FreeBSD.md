@@ -1,3 +1,4 @@
+![](https://www.freebsd.org/logo/logo-full.png)
 # FreeBSD
 A five minute plan.
 

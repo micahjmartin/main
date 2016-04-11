@@ -54,7 +54,7 @@ Finally, remove tasks from your crontab
 
 #### Firewalls
 
-Firstly, you must enable the pf firewall in `/etc/rc.conf`. This allows the firewall to run on boot and to load the logs from a file.
+Firstly, you must enable the pf firewall in `/etc/rc.conf`. This allows the firewall to run on boot and to load the rules from a file.
 
 	$ pf_enable="YES"
 	$ pf_rules="/etc/pf.conf" *#Check if you can change the name of this file*

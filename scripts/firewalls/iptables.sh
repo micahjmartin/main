@@ -3,7 +3,7 @@
 print_logo()
 {
 clear
-printf "\n\n\n		 __  ____  ____  __   ____  __    ____  ____\n		(  )(  _ \(_  _)/ _\ (  _ \(  )  (  __)/ ___)\n		 )(  ) __/  )( /    \ ) _ (/ (_/\ ) _) \___ \ \n		(__)(__)   (__)\_/\_/(____/\____/(____)(____/\n\n\n	A loose collection of commands to create a basic IPTABLES setup\n\n			   	Micah Martin 2015"
+printf "\n\n\n		 __  ____  ____  __   ____  __    ____  ____\n		(  )(  _ \(_  _)/ _\ (  _ \(  )  (  __)/ ___)\n		 )(  ) __/  )( /    \ ) _ (/ (_/\ ) _) \___ \ \n		(__)(__)   (__)\_/\_/(____/\____/(____)(____/\n\n\n	A loose collection of commands to create a basic IPTABLES setup\n\n			   	knif3 2015"
 echo
 echo
 }
@@ -56,7 +56,7 @@ print_options=$print_options"[Allow Established]\n"
 
 allow_ping
 #Allow DNS out/in
-allow_dns
+#allow_dns
 print_options=$print_options"[Defaults Set]\n"
 }
 
@@ -101,7 +101,7 @@ esac
 }
 
 
-#allow(ports,chain,sport/dport)
+#allow(ports,chain,sport/dport,tcp/udp)
 allow()
 {
 
@@ -115,12 +115,17 @@ if [ "$3" = "" ]; then
 else
 	port_target=$(echo $3 | tr '[:upper:]' '[:lower:]')
 fi
+if [ "$4" = "" ]; then
+	proto="TCP"
+else
+	proto=$(echo $4 | tr '[:lower:]' '[:upper:]')
+fi
 if [ "$1" = "any" ] || [ "$1" = "all" ]; then
 	iptables -A $allow_chain -j ACCEPT
-	print_options=$print_options"[All $allow_chain ports allowed]\n"
+	print_options=$print_options"[All $proto $allow_chain ports allowed]\n"
 else
-	echo $1 | tr "," "\n" | xargs -n1 iptables -A $allow_chain -j ACCEPT -p tcp --$port_target
-	print_options=$print_options"[$allow_chain ports $1 allowed]\n"
+	echo $1 | tr "," "\n" | xargs -n1 iptables -A $allow_chain -j ACCEPT -p $proto --$port_target
+	print_options=$print_options"[$proto $allow_chain ports $1 allowed]\n"
 fi
 }
 
@@ -173,27 +178,39 @@ print_options=""
 print_logo
 flush_all -c
 defaults
-read -e -p "Enter Input Ports to Allow: " -i "22,80" ports
-
-
+#inbound tcp
+read -e -p "Enter incoming TCP ports to allow: " -i "22" ports
 if [ "$ports" = "none" ] || [ "$ports" = "" ]; then
-	print_options=$print_options"[No INPUT ports allowed]\n"
+	print_options=$print_options"[No TCP INPUT ports allowed]\n"
 else
-	allow  $ports "INPUT" "dport"
+	allow  $ports "INPUT" "dport" "TCP"
 fi
-
-read -e -p "Enter Output Ports to Allow: " -i "80,443" ports
-
-
+#inbound udp
+read -e -p "Enter incoming UDP ports to allow: " -i "none" ports
 if [ "$ports" = "none" ] || [ "$ports" = "" ]; then
-	print_options=$print_options"[No OUTPUT ports allowed]\n"
+	print_options=$print_options"[No UDP INPUT ports allowed]\n"
 else
-	allow  $ports "OUTPUT" "dport"
+	allow  $ports "INPUT" "dport" "UDP"
 fi
-
+#outbound tcp
+read -e -p "Enter outgoing TCP ports to allow: " -i "80,443,53" ports
+if [ "$ports" = "none" ] || [ "$ports" = "" ]; then
+	print_options=$print_options"[No TCP OUTPUT ports allowed]\n"
+else
+	allow  $ports "OUTPUT" "dport" "TCP"
+fi
+#outbound udp
+read -e -p "Enter outgoing UDP ports to allow: " -i "53" ports
+if [ "$ports" = "none" ] || [ "$ports" = "" ]; then
+	print_options=$print_options"[No UDP OUTPUT ports allowed]\n"
+else
+	allow  $ports "OUTPUT" "dport" "UDP"
+fi
 end_append
 #print_rules
 save_rules
+clear
+print_logo
 echo -e "$print_options"
 }
 

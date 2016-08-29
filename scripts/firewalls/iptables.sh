@@ -62,8 +62,8 @@ print_options=$print_options"[Defaults Set]\n"
 
 allow_ping()
 {
-read -r -p "Allow ICMP (Reply in/Request out)? [y/N] "
-case  in
+read -r -p "Allow ICMP (Reply in/Request out)? [y/N] " yn
+case $yn in
     [yY][eE][sS]|[yY]) 
         iptables -A INPUT -p icmp --icmp-type 0 -j ACCEPT
 	iptables -A OUTPUT -p icmp --icmp-type 8 -j ACCEPT
@@ -76,8 +76,8 @@ esac
 }
 allow_dns()
 {
-read -r -p "Allow DNS in? [y/N] "
-case  in
+read -r -p "Allow DNS in? [y/N] " yn
+case $yn in
     [yY][eE][sS]|[yY]) 
         print_options=$print_options"[DNS in Enabled]\n"
 	iptables -A INPUT -p tcp --sport 53 -j ACCEPT
@@ -87,8 +87,8 @@ case  in
         print_options=$print_options"[DNS in Disabled]\n"
         ;;
 esac
-read -r -p "Allow DNS out? [y/N] "
-case  in
+read -r -p "Allow DNS out? [y/N] " yn
+case $yn in
     [yY][eE][sS]|[yY]) 
         print_options=$print_options"[DNS out Enabled]\n"
 	iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT

@@ -1,4 +1,5 @@
 color elflord 
+syntax on
 set number	" Show line numbers
 set linebreak	" Break lines at word (requires Wrap lines)
 set showbreak=+++	" Wrap-broken line prefix

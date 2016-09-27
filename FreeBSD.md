@@ -69,22 +69,22 @@ Load the service onetime
 Create the file `/etc/pf.conf` and start adding some rules
 
 	$ vi /etc/pf.conf
-	~ iports = "{ 110 995 }"
-	~ oports = "{ 25 465 }"
+	iports = "{ 110 995 }"
+	oports = "{ 25 465 }"
 
 `$iports` is the ports to allow in seperated by spaces and `$oports` is the ports to allow out
 Now you should send the ports to the pf
 NOTE: You must allow loopback and ICMP
 	
-	~ #Block all ports to start
-	~ block all
-	~ pass in quick on lo0 all
-	~ pass out quick on lo0 all
-	~ pass in quick proto icmp all
-	~ pass out quick proto icmp all
-	~ #Now allow in and out ports
-	~ pass in proto tcp to port $iports
-	~ pass out proto tcp to port $iports
+	#Block all ports to start
+	block all
+	pass in quick on lo0 all
+	pass out quick on lo0 all
+	pass in quick proto icmp all
+	pass out quick proto icmp all
+	#Now allow in and out ports
+	pass in proto tcp to port $iports
+	pass out proto tcp to port $iports
 
 Start the pf firewall for the current session, or reboot to restart your box.
 

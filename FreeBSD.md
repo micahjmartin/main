@@ -35,6 +35,7 @@ Find users you do not want and lock them
 NOTE: Users 'root' and 'toor' should stay there by default!
 
 Now lets make sure no users can `su root`
+	
 	$ vi /etc/pam.d/su
 
 Find the line that has `no_warn group=` modify the user groups to `wheel root` or just `root`
@@ -56,10 +57,10 @@ Finally, remove tasks from your crontab
 
 Firstly, you must enable the pf firewall in `/etc/rc.conf`. This allows the firewall to run on boot and to load the rules from a file.
 
-	$ pf_enable="YES"
-	$ pf_rules="/etc/pf.conf" *#Check if you can change the name of this file*
-	$ pflog_enable="YES"
-	$ pflog_logfile="/var/log/pflog"
+	pf_enable="YES"
+	pf_rules="/etc/pf.conf" *#Check if you can change the name of this file*
+	pflog_enable="YES"
+	pflog_logfile="/var/log/pflog"
 
 Load the kernal module for pf
 

@@ -15,6 +15,9 @@ set shiftwidth=4	" Number of auto-indent spaces
 set smartindent	" Enable smart-indent
 set smarttab	" Enable smart-tabs
 set softtabstop=4	" Number of spaces per Tab
+
+match ErrorMsg '\%>80v.\+' " Highlight text over 80 characters wide
+
 "" Advanced
 set ruler	" Show row and column ruler information
 set undolevels=1000	" Number of undo levels

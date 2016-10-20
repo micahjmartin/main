@@ -1,0 +1,47 @@
+#!/bin/bash
+html=$1
+css=$2
+# iina val arrayname
+iina() {
+  array=$(echo "\${$2[@]}")
+  eval "array=$array"
+  for i in ${array[@]}; do
+    if [[ "$i" == "$1" ]]; then
+      ifiina=1
+      return 0
+    fi
+  done
+  ifiina=0
+}
+
+classes=$(cat $html | sed -e 's:>: :' | grep -o "class=\"[^\"]*\"" | cut -d"=" -f2 | sed -e 's/"//g' | tr " " "\n" | sort | uniq)
+tags=$(cat $html | grep -o "<[^>|^ ]*[> ]" | sed -e 's:[<>/ ]::g' | sort | uniq)
+selectors=( $(cat $css | dos2unix | tr '\n' ' ' | tr -s ' ' | sed -e 's:{[^}]*}::g' | tr ' ' '\n' | sed -e 's:\W:\n:g;' | grep -v ^$ | sort | uniq) )
+
+echo ""
+selectors_used=()
+selectors_unused=()
+html_props=( $tags )
+html_props+=( $classes )
+## get unused CSS selectors
+for s in ${selectors[@]}; do
+  iina $s "html_props"
+  if [[ $ifiina -eq 0 ]]; then
+    selectors_unused+=( $s )
+  else
+    selectors_used+=( $s )
+  fi
+done
+echo "Unused selectors in your CSS: [${#selectors_unused[@]}]"
+echo "Used selectors in your HTML: [${#selectors_used[@]}]"
+
+if [ ${#selectors_unused[@]} -lt ${#selectors_used[@]} ]; then
+  echo "The following selectors are unused:"
+  echo "${selectors_unused[@]}"
+else 
+  echo "The following selectors have been used:"
+  echo "${selectors_used[@]}"
+fi
+echo ""
+echo "Unused selectors:"
+echo ${selectors_unused[@]}

@@ -1,36 +1,35 @@
 #!/bin/bash
 COM="iptables"
-GOOD="-j ACCEPT"
-BAD="-j DROP"
 
-IN="$COM -A INPUT"
-OUT="$COM -A OUTPUT"
-UDP="-p udp --dport"
-TCP="-p tcp --dport"
 # Flush
-$COM -F
-$COM -X
 iptables -F
 iptables -X
-echo Flushed...
+iptables -T nat -F
+iptables -T nat -X
+iptables -T mangle -F
+iptables -T mangle -X
 
-# INPUT
-$IN -i lo $GOOD # loopback
-$IN -m state --state REL,EST $GOOD # related
-$IN $TCP 22 $GOOD # ssh
-$IN $TCP 25 $GOOD # SMTP
-$IN $TCP 587 $GOOD # Submission
-$IN $TCP 143 $GOOD # IMAP
-$IN $TCP 993 $GOOD # IMAP SSL (which isnt turned on)
-$IN $BAD # Drop everything else
-echo Input locked...
+# Loopback in and out
+$COM -A INPUT -i lo -j ACCEPT # loopback
+$COM -A OUTPUT -o lo -j ACCEPT # loopback
 
-# OUTPUT
-$OUT -m state --state REL,EST $GOOD 
-$OUT -o lo $GOOD
-$OUT $UDP 53 $GOOD # DNS
-$OUT $BAD
-echo Output locked...
+# input
+for p in 22 25 587 143; do
+    $COM -A INPUT -p tcp --dport $p -j ACCEPT
+    $COM -A OUTPUT -p tcp --sport $p -m state --state REL,EST -j ACCEPT
+done
+
+# output
+for p in 80 443; do
+    $COM -A OUTPUT -p tcp --dport $p -j ACCEPT
+    $COM -A INPUT -p tcp --sport $p -m state --state REL,EST -j ACCEPT
+done
+
+# DNS
+$COM -A INPUT -p udp --sport 53 -j ACCEPT
+$COM -A OUTPUT -p udp --dport 53 -j ACCEPT
+$COM -A INPUT -j DROP
+$COM -A OUTPUT -j DROP
 
 # lockout timer add a command parameter to save changes
 if [[ "$1" == "" ]]; then 

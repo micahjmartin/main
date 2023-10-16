@@ -1,18 +1,14 @@
 ---
 tags: [ vcs ]
 ---
-# To set your identity:
+# Common config options
 git config --global user.name <name>
 git config --global user.email <email>
-
-# To set your editor:
-git config --global core.editor <editor>
-
-# To enable color:
 git config --global color.ui true
 
-# To stage all changes for commit:
-git add --all
+
+# Create a new branch an squash all commits into a single commit in that branch
+git branch new_branch_name $(echo "commit message" | git commit-tree HEAD^{tree})
 
 # To stash changes locally, this will keep the changes in a separate changelist
 # called stash and the working directory is cleaned. You can apply changes
@@ -57,25 +53,11 @@ git reset --hard
 # To go 2 commits back:
 git reset --hard HEAD~2
 
-# Checkout the fb branch, and rebase from <remote>
-git reset --hard <remote>/<branch>
-
-# To revert first/initial commit on a branch:
-# Running git reset --hard HEAD~1 will give error:
-# fatal: ambiguous argument 'HEAD~1': unknown revision or path not in the working tree.
-git update-ref -d HEAD
-
 # To remove untracked files:
 git clean -f -d
 
 # To remove untracked and ignored files:
 git clean -f -d -x
-
-# To push to the tracked master branch:
-git push origin master
-
-# To push to a specified repository:
-git push git@github.com:<username>/<repo>.git
 
 # Tags: Tag a commit
 git tag -a <tag> <commit> -m "<commit message>"
@@ -89,17 +71,7 @@ git push --delete origin <tagname>
 # Tags: To delete a tag locally
 git tag -d <tagname>
 
-# To force a push:
-git push -f
 
-# Branches: To delete the branch <branch>:
-git branch -D <branch>
-
-# Branches: To delete a local <branch>:
-git branch -d <branch>
-
-# Branches: To delete a remote branch <branch>:
-git push --delete origin <branch>
 
 # Branches: To delete all branches on remote that are already merged:
 git branch --merged | egrep -v "(^*|main|dev)" | xargs git branch -d

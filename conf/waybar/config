@@ -1,0 +1,82 @@
+{
+    "layer": "bottom",
+    "position": "top",
+    // "height": 30, // Waybar height
+    // "width": 1280, // Waybar width
+    // Choose the order of the modules
+    "modules-left": ["sway/workspaces", "sway/mode", "network"],
+    "modules-center": ["sway/window"],
+    "modules-right": ["pulseaudio", "battery", "clock"],
+    // Modules configuration
+    "sway/workspaces": {
+         "disable-scroll": true,
+         "all-outputs": false,
+         "format": "{name}: {icon}",
+         "format-icons": {
+             "1": "",
+             "urgent": "",
+             "focused": "",
+             "default": ""
+         }
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 15
+    },
+    "clock": {
+        "format": "{:%H:%M  %Y-%m-%d}"
+    },
+    "cpu": {
+        "format": "{usage}% "
+    },
+    "memory": {
+        "format": "{avail:0.1f} / {total:0.1f} GiB "
+    },
+    "battery": {
+        "states": {
+            // "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{capacity}% {icon}",
+        // "format-good": "", // An empty format will hide the module
+        // "format-full": "",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "network": {
+        // "interface": "wlp2s0", // (Optional) To force the use of this interface
+        "format-wifi": " {essid}",
+        "format-ethernet": "",
+        "format-disconnected": "⚠ Disconnected",
+        "tooltip-format": "({signalStrength}%) {ifname}: {ipaddr}/{cidr}",
+        "on-click": "iwctl station wlan0 scan"
+    },
+    "temperature": {
+        "thermal-zone": "/sys/class/thermal/thermal_zone2"
+    },
+    "backlight": {
+        "format": "{icon} {percent}% "
+    }
+}

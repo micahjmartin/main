@@ -1,7 +1,7 @@
 #!/bin/sh
 """"echo "" 
 # A simple calculator application
-author="Micah J. Martin"
+author="@micahjmartin"
 site="http://localhost"
 
 # To check for updates to the calculator, run the command below!
@@ -17,12 +17,12 @@ exit
 from math import *
 while 1:
     try:
-	math = raw_input("Enter a valid math equation for Python to complete: ")
-	math = str(math)
-	if math[:4]==("exit") or math[:4]=="quit":
-	    print("Thank you for using Micah's Calculator! Use it again sometime!")
-	    break
-	else:
-	    print(math+" = "+str(eval(math)))
+        math = input("Enter a valid math equation for Python to complete: ")
+        math = str(math)
+        if math[:4]==("exit") or math[:4]=="quit":
+            print("Thank you for using my calculator! Use it again sometime!")
+            break
+        else:
+            print(math+" = "+str(eval(math)))
     except:
-	print("That wasnt valid math! Try again!!")
+        print("That wasnt valid math! Try again!!")

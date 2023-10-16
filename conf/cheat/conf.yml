@@ -1,0 +1,29 @@
+---
+# The editor to use with 'cheat -e <sheet>'. Defaults to $EDITOR or $VISUAL.
+editor: code
+colorize: false
+
+#https://github.com/alecthomas/chroma/tree/master/styles
+style: monokai
+
+formatter: terminal256
+pager: bat --file-name "cheat" -l bash
+
+
+cheatpaths:
+  # Cheatpath properties mean the following:
+  #   'name': the name of the cheatpath (view with 'cheat -d', filter with 'cheat -p')
+  #   'path': the filesystem path of the cheatsheet directory (view with 'cheat -d')
+  #   'tags': tags that should be automatically applied to sheets on this path
+  #   'readonly': shall user-created ('cheat -e') cheatsheets be saved here?
+
+  # https://github.com/cheat/cheatsheets
+  #- name: community
+  #  path: ~/.config/cheat/cheatsheets/community
+  #  tags: [ community ]
+  #  readonly: true
+
+  - name: personal
+    path: ~/.config/cheat/cheatsheets/personal
+    tags: [ personal ]
+    readonly: false

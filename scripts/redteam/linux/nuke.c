@@ -1,4 +1,3 @@
-/// Author: Micah Martin (knif3)
 /// Rotates a nuke around the terminal
 /// Usage: nuke [count]
 ///     count is the number of frames to show (DEFAULT IS INFINITY)

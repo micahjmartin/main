@@ -1,0 +1,50 @@
+export PATH=$HOME/bin:$HOME/.config/bin:/usr/local/bin:/home/lethicon/.local/share/gem/ruby/3.0.0/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/go/bin:$PATH
+export ZSH="$HOME/.config/oh-my-zsh"
+export _JAVA_AWT_WM_NONREPARENTING=1 # https://wiki.archlinux.org/title/Sway#Java_applications
+export EDITOR='vim'
+export TERM="xterm-256color"
+
+# ZSH Stuff
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="robbyrussell"
+#ZSH_THEME="eastwood"
+COMPLETION_WAITING_DOTS="true"
+DISABLE_AUTO_UPDATE=true
+plugins=(git)
+ZSH_COMPDUMP=$HOME/.cache/zsh/zcompdump-$ZSH_VERSION
+source $ZSH/oh-my-zsh.sh
+
+# Disable history
+unsetopt share_history
+unset HISTFILE
+
+function gitt() {
+    if [[ $1 =~ ".+/.+" ]]; then
+        git clone git@github.com:$@
+    else
+        git clone git@github.com:micahjmartin/$@
+    fi
+}
+
+function ytdl() {
+    if [ -f "./.ytdlp.conf" ]; then
+	    yt-dlp --config-locations .ytdlp.conf $@
+    elif [ -f "../.ytdlp.conf" ]; then
+        yt-dlp --config-locations ../.ytdlp.conf $@
+    else
+	    yt-dlp $@
+    fi
+}
+
+alias blu="bluetoothctl"
+alias nc="ncat"
+#alias code="codium"
+alias ls="exa -l"
+alias cat=bat
+alias tree="exa --tree"
+alias rrsync="rsync --ignore-existing --exclude '*.part' -rP"
+alias msync="rsync --ignore-existing --exclude '*.part'  --exclude '*.txt'  --exclude '*.jpg' -rP"
+alias files="systemd-run --user nautilus"
+alias runn="systemd-run --user"

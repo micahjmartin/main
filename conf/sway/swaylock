@@ -1,0 +1,43 @@
+#show-failed-attempts
+
+# BG Color
+color=343f52
+image=/home/lethicon/.config/sway/lock.jpg
+
+line-color=00000000
+line-ver-color=00000000
+line-wrong-color=00000000
+line-clear-color=00000000
+line-caps-lock-color=00000000
+separator-color=00000000
+
+indicator-radius=290
+indicator-thickness=20
+
+
+# Only show text when caps lock is on
+text-color=00000000
+text-caps-lock-color=000000
+text-clear-color=00000000
+text-wrong-color=00000000
+text-ver-color=00000000
+
+# Dont show the ring unless capslock is on
+inside-color=00000000
+inside-wrong-color=00000000
+inside-ver-color=00000000
+inside-caps-lock-color=fabb0044
+inside-clear-color=00000000
+#inside-clear-color=FFFFFF11
+
+# Segments
+key-hl-color=FFFFFA99
+bs-hl-color=DDDDFF55
+caps-lock-bs-hl-color=FF0000
+
+
+ring-color=00000000
+ring-wrong-color=fa0000
+ring-ver-color=00c0fa44
+ring-caps-lock-color=fabb0044
+ring-clear-color=FFFFFF55

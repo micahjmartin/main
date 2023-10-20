@@ -24,8 +24,10 @@ function gitt() {
     if [[ "$1" == "" ]]; then
 	echo "USAGE: gitt <repository>|<user/repository>"
     elif [[ $1 =~ ".+/.+" ]]; then
+        echo git clone git@github.com:$@
         git clone git@github.com:$@
     else
+        echo git clone git@github.com:micahjmartin/$@
         git clone git@github.com:micahjmartin/$@
     fi
 }

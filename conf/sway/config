@@ -1,20 +1,30 @@
-# Default config for sway
-#
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
-# Read `man 5 sway` for a complete reference.
-
-### Variables
-#
-# Logo key. Use Mod1 for Alt.
-set $mod Mod1
+# Logo key = Mod4. Use Mod1 for Alt.
+set $mod Mod4
 set $win Mod4
+set $term kitty
+set $menu ulauncher
 
-# Home row direction keys, like vim
-set $left j
-set $down k
-set $up i
-set $right l
+set $lock swaylock -C ~/.config/sway/swaylock -i $HOME/.config/sway/lock.jpg
+output * bg $HOME/.config/sway/bg.png fill
+
+# https://github.com/swaywm/sway/wiki/Systemd-integration
+exec "systemctl --user import-environment; systemctl --user start sway-session.target"
+exec gsettings set org.gnome.desktop.interface gtk-theme 'dark-side'  
+
+## Lock screen
+exec swayidle -w \
+        timeout 1200 "$lock" \
+        timeout 1230 'swaymsg "output * dpms off"' \
+        resume 'swaymsg "output * dpms on"' \
+        before-sleep "$lock -f"
+
+bindsym $win+l exec $lock
+
+
+# Start terminal with ALT+Enter
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+q kill
+bindsym $mod+space exec $menu
 
 gaps inner 10
 #gaps outer 10
@@ -22,8 +32,6 @@ smart_gaps on
 smart_borders no_gaps
 
 
-set $term kitty
-set $menu ulauncher
 
 # Float ghidra windows
 for_window [class="ghidra-Ghidra" title="^(?!CodeBrowser).*"] {
@@ -40,43 +48,24 @@ for_window [title="Picture-in-Picture"] {
     sticky enabled
     border none
 }
+
 for_window [title="^OpenSnitch v.*"] {
     sticky enabled
     floating enabled
 }
 
-exec gsettings set org.gnome.desktop.interface gtk-theme 'dark-side'  
-
-output * bg /home/lethicon/.config/sway/bg.png fill
-
-
-## Lock screen
-exec swayidle -w \
-        timeout 1200 'swaylock -C /home/lethicon/.config/sway/swaylock' \
-        timeout 1230 'swaymsg "output * dpms off"' \
-        resume 'swaymsg "output * dpms on"' \
-        before-sleep 'swaylock -f -C /home/lethicon/.config/sway/swaylock'
-
-
-
-bindsym $win+l exec swaylock -C /home/lethicon/.config/sway/swaylock
 
 bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
-bindsym XF86MonBrightnessUp exec blight set +10% 
-bindsym XF86MonBrightnessDown exec blight set -10% 
+bindsym XF86MonBrightnessUp exec brightnessctl set +10% 
+bindsym XF86MonBrightnessDown exec brightnessctl set 10%- 
 bindsym XF86Tools exec codium ~/.config/
-bindsym XF86Search exec grim -g "$(slurp)" - | wl-copy
-
-# Start terminal with ALT+Enter
-bindsym $mod+Return exec $term
-# Kill focused window
-bindsym $mod+Shift+q kill
-
-# Start your launcher
-bindsym $mod+space exec $menu
+# XF86AudioMedia - Framework symbol
+# Super_L - Projector symbol ? What is this
+# XF86Search - thinkpad 
+bindsym Print exec grim -g "$(slurp)" - | wl-copy
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
@@ -84,6 +73,7 @@ bindsym $mod+space exec $menu
 # Change normal to inverse to use left mouse button for resizing and right
 # mouse button for dragging.
 floating_modifier $mod normal
+
 # Toggle the current focus between tiling and floating mode
 bindsym $mod+Shift+space floating toggle
 
@@ -91,14 +81,9 @@ bindsym $mod+Shift+space floating toggle
 bindsym $mod+Shift+c reload
 
 # Exit sway (logs you out of your Wayland session)
-bindsym $mod+Shift+e exit #-t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
+bindsym $mod+Shift+e exit -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'
 bindsym $mod+F4 exit
 # Move your focus around
-bindsym $mod+$left focus left
-bindsym $mod+$down focus down
-bindsym $mod+$up focus up
-bindsym $mod+$right focus right
-
 # Or use $mod+[up|down|left|right]
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
@@ -106,11 +91,6 @@ bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # Move the focused window with the same, but add Shift
-bindsym $mod+Shift+$left move left
-bindsym $mod+Shift+$down move down
-bindsym $mod+Shift+$up move up
-bindsym $mod+Shift+$right move right
-# Ditto, with arrow keys
 bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
@@ -179,6 +159,3 @@ bar {
     position top
     swaybar_command waybar
 }
-
-# https://github.com/swaywm/sway/wiki/Systemd-integration
-exec "systemctl --user import-environment; systemctl --user start sway-session.target"

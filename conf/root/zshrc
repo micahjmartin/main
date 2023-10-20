@@ -21,7 +21,9 @@ unsetopt share_history
 unset HISTFILE
 
 function gitt() {
-    if [[ $1 =~ ".+/.+" ]]; then
+    if [[ "$1" == "" ]]; then
+	echo "USAGE: gitt <repository>|<user/repository>"
+    elif [[ $1 =~ ".+/.+" ]]; then
         git clone git@github.com:$@
     else
         git clone git@github.com:micahjmartin/$@

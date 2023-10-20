@@ -2,7 +2,6 @@
 
 # BG Color
 color=343f52
-image=/home/lethicon/.config/sway/lock.jpg
 
 line-color=00000000
 line-ver-color=00000000

@@ -13,7 +13,7 @@
         "id": "0bbd6667-2aa0-4e03-8abc-32b1f8ac16c5",
         "name": "DuckDuckGo",
         "keyword": "s",
-        "cmd": "https://duckduckgo.com/?q=%s&kd=-1&kh=1&k5=-1&k1=-1&kam=osm&kae=d",
+        "cmd": "https://duckduckgo.com/?q=%s&kp=-1&kz=1&kd=-1&kh=1&k5=-1&k1=-1&kam=osm&kae=d&kaa=p&kx=6cbb66&km=l&ia=web",
         "icon": "~/.config/ulauncher/icons/duckduck.png",
         "is_default_search": true,
         "run_without_argument": false,

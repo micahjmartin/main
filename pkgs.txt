@@ -1,0 +1,63 @@
+# Literally needed
+base
+base-devel
+linux
+linux-firmware
+lvm2
+
+# Core tools
+git
+apparmor
+fuse3
+lsof
+gocryptfs
+iwd
+bluez
+bluez-utils
+pipewire
+pipewire-pulse
+
+noto-fonts
+noto-fonts-extra
+ttf-hack
+
+# Functional tools
+zip
+unzip
+eza # ls replacement
+bat
+vim
+signal-desktop
+keepassxc
+restic
+libsecret # Used for keepass/restic integration
+firefox
+age
+zsh
+kitty
+sudo
+man-db
+man-pages
+nautilus
+
+# https://wiki.archlinux.org/title/Makepkg#Tips_and_tricks
+mold
+pigz
+
+# https://wiki.archlinux.org/title/Pacman/Tips_and_tricks#aria2
+aria2
+
+# Window Manager
+polkit
+sway
+swaylock
+swayidle
+swaybg
+waybar
+greetd
+greetd-tuigreet
+xorg-xwayland
+wl-clipboard
+slurp
+grim
+
